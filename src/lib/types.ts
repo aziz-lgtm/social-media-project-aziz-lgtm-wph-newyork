@@ -34,3 +34,48 @@ export interface MeResult {
   profile: Profile;
   stats: MeStats;
 }
+
+export interface PostAuthor {
+  id: number;
+  username: string;
+  name: string;
+  avatarUrl: string | null;
+}
+
+export interface Post {
+  id: number;
+  imageUrl: string;
+  caption: string;
+  createdAt: string;
+  author: PostAuthor;
+  likeCount: number;
+  commentCount: number;
+  likedByMe: boolean;
+}
+
+export interface Pagination {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+}
+
+export interface FeedResult {
+  items: Post[];
+  pagination: Pagination;
+}
+
+export interface LikeUser {
+  id: number;
+  username: string;
+  name: string;
+  avatarUrl: string | null;
+  isFollowedByMe: boolean;
+  isMe: boolean;
+  followsMe: boolean;
+}
+
+export interface PostLikesResult {
+  users: LikeUser[];
+  pagination: Pagination;
+}

@@ -5,7 +5,6 @@ import { Search } from "lucide-react";
 import { toast } from "sonner";
 import { Logo } from "@/components/logo";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,12 +24,18 @@ function UserMenu({ size }: { size: "desktop" | "mobile" }) {
   if (!user) {
     return (
       <div className="flex items-center gap-3">
-        <Button variant="ghost" asChild>
-          <Link href="/login">Login</Link>
-        </Button>
-        <Button asChild className="rounded-full">
-          <Link href="/register">Register</Link>
-        </Button>
+        <Link
+          href="/login"
+          className="flex h-10.75 items-center rounded-full border border-border px-6 text-sm font-semibold text-foreground"
+        >
+          Login
+        </Link>
+        <Link
+          href="/register"
+          className="flex h-11 items-center rounded-full bg-[#6936F2] px-6 text-sm font-semibold text-white hover:bg-[#7F51F9]"
+        >
+          Register
+        </Link>
       </div>
     );
   }
@@ -83,7 +88,7 @@ export function Navbar() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-black">
       {/* Desktop: 1440×80, px-120 */}
-      <div className="mx-auto hidden h-20 max-w-[1440px] items-center justify-between gap-6 px-8 md:flex xl:px-[120px]">
+      <div className="mx-auto hidden h-20 w-full max-w-page items-center justify-between gap-6 px-30 md:flex">
         <Link href="/feed" className="flex shrink-0 items-center gap-3">
           <Logo className="text-foreground" />
           <span className="text-2xl font-bold text-foreground">Sociality</span>

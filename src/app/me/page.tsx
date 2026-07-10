@@ -3,6 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import { AuthGuard } from "@/components/auth-guard";
+import { BottomNav } from "@/components/bottom-nav";
 import { Navbar } from "@/components/navbar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -95,9 +96,10 @@ export default function MePage() {
   return (
     <AuthGuard>
       <Navbar />
-      <main className="mx-auto w-full max-w-2xl flex-1 px-4 py-10">
+      <main className="mx-auto w-full max-w-2xl flex-1 px-4 py-10 pb-32">
         <MeContent />
       </main>
+      <BottomNav />
     </AuthGuard>
   );
 }

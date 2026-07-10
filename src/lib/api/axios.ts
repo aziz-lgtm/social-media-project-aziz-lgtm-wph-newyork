@@ -11,6 +11,10 @@ api.interceptors.request.use((config) => {
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
+  // Authenticated responses must never be served from the browser's HTTP
+  // cache: the API doesn't vary caching by Authorization, so a 304 can
+  // silently replay a *different* user's cached response after login switch.
+  config.headers["Cache-Control"] = "no-store";
   return config;
 });
 
