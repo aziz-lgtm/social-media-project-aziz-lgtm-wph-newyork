@@ -1,7 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
-import { Search } from "lucide-react";
+import { Menu, Search, X } from "lucide-react";
 import { toast } from "sonner";
 import { Logo } from "@/components/logo";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -16,28 +17,58 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { logout } from "@/store/auth-slice";
 import { useRouter } from "next/navigation";
 
+/** Desktop guest buttons, inline in the header (measured from design/Before-Login.svg). */
+function DesktopGuestButtons() {
+  return (
+    <div className="flex items-center gap-3">
+      <Link
+        href="/login"
+        className="flex h-10.75 items-center rounded-full border border-border px-6 text-sm font-semibold text-foreground"
+      >
+        Login
+      </Link>
+      <Link
+        href="/register"
+        className="flex h-11 items-center rounded-full bg-[#6936F2] px-6 text-sm font-semibold text-white hover:bg-[#7F51F9]"
+      >
+        Register
+      </Link>
+    </div>
+  );
+}
+
+/**
+ * Mobile guest buttons, revealed by the hamburger toggle below the header.
+ * Measured from design/before-login-open-menu.svg: two ~40px pill buttons
+ * flush under the header, gap ~12px, flex-1 to fill the row.
+ */
+function MobileGuestButtons() {
+  return (
+    <div className="flex gap-3 px-4 pb-4 md:hidden">
+      <Link
+        href="/login"
+        className="flex h-10 flex-1 items-center justify-center rounded-full border border-border text-sm font-semibold text-foreground"
+      >
+        Login
+      </Link>
+      <Link
+        href="/register"
+        className="flex h-10 flex-1 items-center justify-center rounded-full bg-[#6936F2] text-sm font-semibold text-white hover:bg-[#7F51F9]"
+      >
+        Register
+      </Link>
+    </div>
+  );
+}
+
 function UserMenu({ size }: { size: "desktop" | "mobile" }) {
   const user = useAppSelector((s) => s.auth.user);
   const dispatch = useAppDispatch();
   const router = useRouter();
 
   if (!user) {
-    return (
-      <div className="flex items-center gap-3">
-        <Link
-          href="/login"
-          className="flex h-10.75 items-center rounded-full border border-border px-6 text-sm font-semibold text-foreground"
-        >
-          Login
-        </Link>
-        <Link
-          href="/register"
-          className="flex h-11 items-center rounded-full bg-[#6936F2] px-6 text-sm font-semibold text-white hover:bg-[#7F51F9]"
-        >
-          Register
-        </Link>
-      </div>
-    );
+    // Desktop shows Login/Register inline; mobile uses the hamburger toggle instead (see Navbar).
+    return size === "desktop" ? <DesktopGuestButtons /> : null;
   }
 
   const initials = user.name
@@ -68,8 +99,12 @@ function UserMenu({ size }: { size: "desktop" | "mobile" }) {
         <DropdownMenuItem
           variant="destructive"
           onClick={() => {
+            // Clear the session, then do a full navigation (not router.replace)
+            // to the guest home. A client-side transition races AuthGuard's own
+            // redirect effect on the still-mounted guarded page (e.g. /feed),
+            // which wins and sends us to /login?returnTo=... instead.
             dispatch(logout());
-            router.replace("/login");
+            window.location.href = "/";
           }}
         >
           Logout
@@ -80,6 +115,9 @@ function UserMenu({ size }: { size: "desktop" | "mobile" }) {
 }
 
 export function Navbar() {
+  const user = useAppSelector((s) => s.auth.user);
+  const [menuOpen, setMenuOpen] = useState(false);
+
   const onSearchSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     toast.info("User search is coming soon");
@@ -96,7 +134,7 @@ export function Navbar() {
 
         <form
           onSubmit={onSearchSubmit}
-          className="flex h-12 w-full max-w-[491px] items-center gap-2 rounded-full border border-border bg-[#0A0D12] px-4"
+          className="flex h-12 w-full max-w-122.75 items-center gap-2 rounded-full border border-border bg-[#0A0D12] px-4"
         >
           <Search className="size-4 shrink-0 text-[#717680]" />
           <input
@@ -127,9 +165,22 @@ export function Navbar() {
           >
             <Search className="size-5" />
           </button>
-          <UserMenu size="mobile" />
+          {user ? (
+            <UserMenu size="mobile" />
+          ) : (
+            <button
+              type="button"
+              aria-label={menuOpen ? "Close menu" : "Open menu"}
+              onClick={() => setMenuOpen((v) => !v)}
+              className="text-foreground"
+            >
+              {menuOpen ? <X className="size-5" /> : <Menu className="size-5" />}
+            </button>
+          )}
         </div>
       </div>
+
+      {!user && menuOpen && <MobileGuestButtons />}
     </header>
   );
 }

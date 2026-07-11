@@ -52,10 +52,12 @@ function FollowButton({ user }: { user: LikeUser }) {
 }
 
 /**
- * Measured from design/Likes.svg: outer container 548x570 top 227,
- * X close icon 12x12 (white, stroke-2) sits above the panel,
- * panel bg #0A0D12 border #181D27 rounded-lg, rows 76px tall with
- * 48px avatars, Follow (solid #6936F2) / Following (outline) buttons.
+ * Measured from design/Likes.svg (desktop) and design/Likes-mobile.svg:
+ * scrim #0A0D12 @ 80% opacity on both (not black/70 as previously
+ * assumed). Desktop: bordered card 548x570 top 227, rounded-lg, p-6.
+ * Mobile: no card — rows float directly on the scrim with just px-4.
+ * Both: X close icon above the content, 48px avatars (r24), 76px rows,
+ * Follow (solid #6936F2) / Following (outline) buttons.
  */
 export function LikesModal({
   postId,
@@ -70,7 +72,7 @@ export function LikesModal({
   });
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/70 px-4 py-14">
+    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-[#0A0D12]/80 px-4 py-14">
       <div className="flex w-full max-w-137 flex-col items-end gap-4">
         <button
           type="button"
@@ -81,7 +83,7 @@ export function LikesModal({
           <X className="size-3" strokeWidth={2} />
         </button>
 
-        <div className="w-full rounded-lg border border-border bg-[#0A0D12] p-6">
+        <div className="w-full md:rounded-lg md:border md:border-border md:bg-[#0A0D12] md:p-6">
           <h2 className="text-xl font-bold">Likes</h2>
 
           <div className="mt-4 flex flex-col">

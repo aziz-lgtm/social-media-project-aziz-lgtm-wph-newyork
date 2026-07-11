@@ -65,6 +65,18 @@ export interface FeedResult {
   pagination: Pagination;
 }
 
+export interface Comment {
+  id: number;
+  text: string;
+  createdAt: string;
+  author: PostAuthor;
+}
+
+export interface CommentsResult {
+  comments: Comment[];
+  pagination: Pagination;
+}
+
 export interface LikeUser {
   id: number;
   username: string;

@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { Heart, MessageCircle, Send, Bookmark } from "lucide-react";
@@ -11,6 +13,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { LikesModal } from "@/components/likes-modal";
 import { cn } from "@/lib/utils";
 import { likePost, unlikePost, savePost, unsavePost } from "@/lib/api/posts";
+import { useAppSelector } from "@/store/hooks";
 import type { Post } from "@/lib/types";
 
 dayjs.extend(relativeTime);
@@ -27,10 +30,12 @@ function initials(name: string) {
 const CAPTION_LIMIT = 80;
 
 /**
- * Measured from design/feed.svg: card 600px wide, gap 12 between
- * elements, header avatar 64px, image 600x600 rounded 8px, icon row
- * (heart #B41759 when liked / outline otherwise, comment, share,
- * bookmark right-aligned), divider #181D27 at the bottom.
+ * Measured from design/feed.svg (desktop) and design/feed-mobile.svg
+ * (mobile): card 600px wide / 361px mobile, gap 12 / 8 between elements,
+ * header avatar 64px / 44px, image square rounded 8px both (mobile
+ * measured 361x353, effectively 1:1), icon row (heart #B41759 when liked
+ * / outline otherwise, comment, share, bookmark right-aligned), divider
+ * #181D27 at the bottom.
  */
 export function PostCard({
   post,
@@ -39,12 +44,21 @@ export function PostCard({
   post: Post;
   initiallySaved: boolean;
 }) {
+  const router = useRouter();
+  const user = useAppSelector((s) => s.auth.user);
   const queryClient = useQueryClient();
   const [liked, setLiked] = useState(post.likedByMe);
   const [likeCount, setLikeCount] = useState(post.likeCount);
   const [saved, setSaved] = useState(initiallySaved);
   const [expanded, setExpanded] = useState(false);
   const [showLikes, setShowLikes] = useState(false);
+
+  /** Guests get sent to login instead of firing a request that will 401. */
+  const requireAuth = () => {
+    if (user) return true;
+    router.push("/login");
+    return false;
+  };
 
   const likeMutation = useMutation({
     // onMutate flips `liked` before this runs, so it reflects the target state.
@@ -83,13 +97,13 @@ export function PostCard({
   const comingSoon = () => toast.info("Coming soon");
 
   return (
-    <article className="flex w-full flex-col gap-3">
+    <article className="flex w-full flex-col gap-2 md:gap-3">
       <button
         type="button"
         onClick={comingSoon}
         className="flex items-center gap-3 text-left"
       >
-        <Avatar className="size-16">
+        <Avatar className="size-11 md:size-16">
           <AvatarImage src={post.author.avatarUrl ?? undefined} alt={post.author.name} />
           <AvatarFallback>{initials(post.author.name)}</AvatarFallback>
         </Avatar>
@@ -99,22 +113,25 @@ export function PostCard({
         </div>
       </button>
 
-      <div className="relative aspect-square w-full overflow-hidden rounded-lg">
+      <Link
+        href={`/posts/${post.id}`}
+        className="relative block aspect-square w-full overflow-hidden rounded-lg"
+      >
         <Image
           src={post.imageUrl}
           alt={post.caption || `Post by ${post.author.name}`}
           fill
-          sizes="600px"
+          sizes="(min-width: 768px) 600px, 361px"
           className="object-cover"
         />
-      </div>
+      </Link>
 
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-7.5">
           <div className="flex items-center gap-2">
             <button
               type="button"
-              onClick={() => likeMutation.mutate()}
+              onClick={() => requireAuth() && likeMutation.mutate()}
               aria-pressed={liked}
               aria-label={liked ? "Unlike" : "Like"}
             >
@@ -134,15 +151,14 @@ export function PostCard({
             </button>
           </div>
 
-          <button
-            type="button"
-            onClick={comingSoon}
+          <Link
+            href={`/posts/${post.id}`}
             className="flex items-center gap-2"
             aria-label="Comments"
           >
             <MessageCircle className="size-5" />
             <span className="text-sm">{post.commentCount}</span>
-          </button>
+          </Link>
 
           <button
             type="button"
@@ -155,7 +171,7 @@ export function PostCard({
 
         <button
           type="button"
-          onClick={() => saveMutation.mutate()}
+          onClick={() => requireAuth() && saveMutation.mutate()}
           aria-pressed={saved}
           aria-label={saved ? "Unsave" : "Save"}
         >

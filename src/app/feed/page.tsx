@@ -53,7 +53,7 @@ function FeedContent() {
 
   if (feedQuery.isPending) {
     return (
-      <div className="flex w-full flex-col gap-6">
+      <div className="flex w-full flex-col gap-4 md:gap-6">
         <FeedSkeleton />
         <FeedSkeleton />
       </div>
@@ -89,7 +89,7 @@ function FeedContent() {
   }
 
   return (
-    <div className="flex w-full flex-col gap-6">
+    <div className="flex w-full flex-col gap-4 md:gap-6">
       {posts.map((post) => (
         <PostCard
           key={post.id}
@@ -107,7 +107,7 @@ export default function FeedPage() {
   return (
     <AuthGuard>
       <Navbar />
-      <main className="mx-auto w-full max-w-150 flex-1 px-4 py-8 pb-32">
+      <main className="mx-auto w-full max-w-90.25 flex-1 pt-4 pb-32 md:max-w-150 md:pt-10">
         <FeedContent />
       </main>
       <BottomNav />
