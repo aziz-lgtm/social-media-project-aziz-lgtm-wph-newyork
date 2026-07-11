@@ -1,6 +1,6 @@
 # Sociality Frontend MVP Guide (Business • FULL per Endpoint)
 
-[Link Deployment di Vercel](socialitagram.vercel.app)
+[Link Deployment di Vercel](https://socialitagram.vercel.app/)
 
 > **Goal:** Mentee men-deliver MVP FE yang mencakup semua endpoint yang kamu sediakan. Fokus pada end-to-end user flows, UI surfaces, akses/otorisasi, dan acceptance criteria.
 
