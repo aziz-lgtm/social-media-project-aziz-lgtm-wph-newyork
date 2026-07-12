@@ -98,9 +98,8 @@ export function PostCard({
 
   return (
     <article className="flex w-full flex-col gap-2 md:gap-3">
-      <button
-        type="button"
-        onClick={comingSoon}
+      <Link
+        href={`/profile/${post.author.username}`}
         className="flex items-center gap-3 text-left"
       >
         <Avatar className="size-11 md:size-16">
@@ -111,7 +110,7 @@ export function PostCard({
           <p className="font-bold">{post.author.name}</p>
           <p className="text-sm text-[#A4A7AE]">{dayjs(post.createdAt).fromNow()}</p>
         </div>
-      </button>
+      </Link>
 
       <Link
         href={`/posts/${post.id}`}
@@ -185,9 +184,9 @@ export function PostCard({
       </div>
 
       <div>
-        <button type="button" onClick={comingSoon} className="font-bold">
+        <Link href={`/profile/${post.author.username}`} className="font-bold">
           {post.author.name}
-        </button>
+        </Link>
         {post.caption && (
           <p className="mt-1 text-sm">
             {caption}{" "}

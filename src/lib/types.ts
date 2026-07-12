@@ -91,3 +91,39 @@ export interface PostLikesResult {
   users: LikeUser[];
   pagination: Pagination;
 }
+
+export interface SearchUser {
+  id: number;
+  username: string;
+  name: string;
+  avatarUrl: string | null;
+  isFollowedByMe: boolean;
+}
+
+export interface SearchResult {
+  users: SearchUser[];
+  pagination: Pagination;
+}
+
+export interface PublicProfileCounts {
+  post: number;
+  followers: number;
+  following: number;
+  likes: number;
+}
+
+export interface PublicProfile {
+  id: number;
+  name: string;
+  username: string;
+  bio: string | null;
+  avatarUrl: string | null;
+  counts: PublicProfileCounts;
+  isFollowing: boolean;
+  isMe: boolean;
+}
+
+export interface UserPostsResult {
+  posts: Post[];
+  pagination: Pagination;
+}

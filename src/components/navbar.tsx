@@ -1,9 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
 import { Menu, Search, X } from "lucide-react";
-import { toast } from "sonner";
 import { Logo } from "@/components/logo";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -13,6 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { SearchResultsList, useUserSearch } from "@/components/user-search";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { logout } from "@/store/auth-slice";
 import { useRouter } from "next/navigation";
@@ -61,7 +61,7 @@ function MobileGuestButtons() {
   );
 }
 
-function UserMenu({ size }: { size: "desktop" | "mobile" }) {
+export function UserMenu({ size }: { size: "desktop" | "mobile" }) {
   const user = useAppSelector((s) => s.auth.user);
   const dispatch = useAppDispatch();
   const router = useRouter();
@@ -95,6 +95,9 @@ function UserMenu({ size }: { size: "desktop" | "mobile" }) {
         <DropdownMenuItem onClick={() => router.push("/me")}>
           My Profile
         </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => router.push("/messages")}>
+          Messages
+        </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem
           variant="destructive"
@@ -117,11 +120,13 @@ function UserMenu({ size }: { size: "desktop" | "mobile" }) {
 export function Navbar() {
   const user = useAppSelector((s) => s.auth.user);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [query, setQuery] = useState("");
+  const [desktopSearchFocused, setDesktopSearchFocused] = useState(false);
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
+  const searchQuery = useUserSearch(query);
+  const desktopFormRef = useRef<HTMLDivElement>(null);
 
-  const onSearchSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    toast.info("User search is coming soon");
-  };
+  const desktopDropdownOpen = desktopSearchFocused && query.trim().length > 0;
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-black">
@@ -132,17 +137,36 @@ export function Navbar() {
           <span className="text-2xl font-bold text-foreground">Sociality</span>
         </Link>
 
-        <form
-          onSubmit={onSearchSubmit}
-          className="flex h-12 w-full max-w-122.75 items-center gap-2 rounded-full border border-border bg-[#0A0D12] px-4"
-        >
-          <Search className="size-4 shrink-0 text-[#717680]" />
-          <input
-            type="search"
-            placeholder="Search"
-            className="w-full bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground"
-          />
-        </form>
+        <div ref={desktopFormRef} className="relative w-full max-w-122.75">
+          <div className="flex h-12 w-full items-center gap-2 rounded-full border border-border bg-[#0A0D12] px-4">
+            <Search className="size-4 shrink-0 text-[#717680]" />
+            <input
+              type="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              onFocus={() => setDesktopSearchFocused(true)}
+              onBlur={(e) => {
+                // Keep the dropdown open when focus moves to a result link inside it.
+                if (!desktopFormRef.current?.contains(e.relatedTarget as Node)) {
+                  setDesktopSearchFocused(false);
+                }
+              }}
+              placeholder="Search"
+              className="w-full bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground"
+            />
+          </div>
+
+          {/* Measured from design/Found-dekstop.svg and not-found-dekstop.svg: same 490px panel, rx 19.5, bg #0A0D12 border #181D27, positioned flush under the search bar. */}
+          {desktopDropdownOpen && (
+            <div className="absolute top-full mt-2 w-full rounded-[19.5px] border border-border bg-[#0A0D12] p-3">
+              <SearchResultsList
+                query={query}
+                searchQuery={searchQuery}
+                onSelect={() => setDesktopSearchFocused(false)}
+              />
+            </div>
+          )}
+        </div>
 
         <div className="shrink-0">
           <UserMenu size="desktop" />
@@ -160,7 +184,7 @@ export function Navbar() {
           <button
             type="button"
             aria-label="Search"
-            onClick={() => toast.info("User search is coming soon")}
+            onClick={() => setMobileSearchOpen(true)}
             className="text-foreground"
           >
             <Search className="size-5" />
@@ -181,6 +205,40 @@ export function Navbar() {
       </div>
 
       {!user && menuOpen && <MobileGuestButtons />}
+
+      {/* Mobile full-screen search, measured from design/found-mobile.svg: input+X row replaces the header, results fill the rest of the viewport. */}
+      {mobileSearchOpen && (
+        <div className="fixed inset-0 z-50 flex flex-col bg-black md:hidden">
+          <div className="flex h-16 items-center gap-3 border-b border-border px-4">
+            <div className="flex h-9.75 flex-1 items-center gap-2 rounded-full border border-border bg-[#0A0D12] px-4">
+              <Search className="size-4 shrink-0 text-[#717680]" />
+              <input
+                type="search"
+                autoFocus
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search"
+                className="w-full bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground"
+              />
+            </div>
+            <button
+              type="button"
+              aria-label="Close search"
+              onClick={() => setMobileSearchOpen(false)}
+              className="text-foreground"
+            >
+              <X className="size-6" />
+            </button>
+          </div>
+          <div className="flex-1 overflow-y-auto px-2">
+            <SearchResultsList
+              query={query}
+              searchQuery={searchQuery}
+              onSelect={() => setMobileSearchOpen(false)}
+            />
+          </div>
+        </div>
+      )}
     </header>
   );
 }

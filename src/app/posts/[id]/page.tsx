@@ -115,7 +115,8 @@ function PostDetailContent({ postId }: { postId: number }) {
   const displayLikeCount = likeCount ?? post?.likeCount ?? 0;
 
   const likeMutation = useMutation({
-    mutationFn: () => (isLiked ? unlikePost(postId) : likePost(postId)),
+    // onMutate flips `liked` before this runs, so it reflects the target state.
+    mutationFn: () => (isLiked ? likePost(postId) : unlikePost(postId)),
     onMutate: () => {
       setLiked(!isLiked);
       setLikeCount(displayLikeCount + (isLiked ? -1 : 1));
@@ -131,7 +132,8 @@ function PostDetailContent({ postId }: { postId: number }) {
   });
 
   const saveMutation = useMutation({
-    mutationFn: () => (saved ?? false ? unsavePost(postId) : savePost(postId)),
+    // onMutate flips `saved` before this runs, so it reflects the target state.
+    mutationFn: () => (saved ?? false ? savePost(postId) : unsavePost(postId)),
     onMutate: () => setSaved(!(saved ?? false)),
     onSuccess: (data) => {
       setSaved(data.saved);
@@ -225,7 +227,7 @@ function PostDetailContent({ postId }: { postId: number }) {
 
       <div className="flex w-full min-w-0 flex-col md:w-110">
         <div className="flex items-center gap-3">
-          <Link href={`/profile/${post.author.username}`} onClick={comingSoon}>
+          <Link href={`/profile/${post.author.username}`}>
             <Avatar className="size-10">
               <AvatarImage src={post.author.avatarUrl ?? undefined} alt={post.author.name} />
               <AvatarFallback>{initials(post.author.name)}</AvatarFallback>

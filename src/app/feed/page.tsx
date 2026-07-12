@@ -7,7 +7,7 @@ import { BottomNav } from "@/components/bottom-nav";
 import { Navbar } from "@/components/navbar";
 import { PostCard } from "@/components/post-card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getFeed, getMySaved } from "@/lib/api/posts";
+import { getExplorePosts, getFeed, getMySaved } from "@/lib/api/posts";
 
 function FeedSkeleton() {
   return (
@@ -37,19 +37,42 @@ function FeedContent() {
         : undefined,
   });
 
+  // Falls back to public/explore posts when the following-based feed is
+  // empty, so a logged-in user with no follows still sees content — same
+  // source as the guest homepage (/api/posts).
+  const isFeedEmpty =
+    feedQuery.isSuccess && feedQuery.data.pages.flatMap((p) => p.items).length === 0;
+
+  const exploreQuery = useInfiniteQuery({
+    queryKey: ["explore"],
+    queryFn: ({ pageParam }) => getExplorePosts(pageParam),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) =>
+      lastPage.pagination.page < lastPage.pagination.totalPages
+        ? lastPage.pagination.page + 1
+        : undefined,
+    enabled: isFeedEmpty,
+  });
+
+  const activeQuery = isFeedEmpty ? exploreQuery : feedQuery;
+
   const sentinelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const el = sentinelRef.current;
     if (!el) return;
     const observer = new IntersectionObserver((entries) => {
-      if (entries[0].isIntersecting && feedQuery.hasNextPage && !feedQuery.isFetchingNextPage) {
-        feedQuery.fetchNextPage();
+      if (
+        entries[0].isIntersecting &&
+        activeQuery.hasNextPage &&
+        !activeQuery.isFetchingNextPage
+      ) {
+        activeQuery.fetchNextPage();
       }
     });
     observer.observe(el);
     return () => observer.disconnect();
-  }, [feedQuery]);
+  }, [activeQuery]);
 
   if (feedQuery.isPending) {
     return (
@@ -77,7 +100,35 @@ function FeedContent() {
 
   const posts = feedQuery.data.pages.flatMap((p) => p.items);
 
-  if (posts.length === 0) {
+  if (posts.length > 0) {
+    return (
+      <div className="flex w-full flex-col gap-4 md:gap-6">
+        {posts.map((post) => (
+          <PostCard
+            key={post.id}
+            post={post}
+            initiallySaved={savedQuery.data?.has(post.id) ?? false}
+          />
+        ))}
+        <div ref={sentinelRef} />
+        {feedQuery.isFetchingNextPage && <FeedSkeleton />}
+      </div>
+    );
+  }
+
+  // Following-based feed is empty — fall back to public/explore posts.
+  if (exploreQuery.isPending) {
+    return (
+      <div className="flex w-full flex-col gap-4 md:gap-6">
+        <FeedSkeleton />
+        <FeedSkeleton />
+      </div>
+    );
+  }
+
+  const explorePosts = exploreQuery.data?.pages.flatMap((p) => p.items) ?? [];
+
+  if (exploreQuery.isError || explorePosts.length === 0) {
     return (
       <div className="py-10 text-center">
         <h1 className="text-lg font-bold">Your feed is empty</h1>
@@ -90,7 +141,13 @@ function FeedContent() {
 
   return (
     <div className="flex w-full flex-col gap-4 md:gap-6">
-      {posts.map((post) => (
+      <div>
+        <h2 className="font-bold">Discover posts</h2>
+        <p className="text-sm text-muted-foreground">
+          Follow people to build your own feed — for now, here&apos;s what&apos;s new.
+        </p>
+      </div>
+      {explorePosts.map((post) => (
         <PostCard
           key={post.id}
           post={post}
@@ -98,7 +155,7 @@ function FeedContent() {
         />
       ))}
       <div ref={sentinelRef} />
-      {feedQuery.isFetchingNextPage && <FeedSkeleton />}
+      {exploreQuery.isFetchingNextPage && <FeedSkeleton />}
     </div>
   );
 }
