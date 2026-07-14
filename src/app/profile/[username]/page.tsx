@@ -200,7 +200,8 @@ function ProfileContent({ username }: { username: string }) {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex items-center gap-4">
+      {/* Desktop: avatar, name, Follow button, and Message button all sit in one row. */}
+      <div className="hidden items-center gap-4 md:flex">
         <Avatar className="size-16">
           <AvatarImage src={profile.avatarUrl ?? undefined} alt={profile.name} />
           <AvatarFallback className="text-xl">{initials(profile.name)}</AvatarFallback>
@@ -223,6 +224,38 @@ function ProfileContent({ username }: { username: string }) {
             className="flex size-12 items-center justify-center rounded-full border border-border text-foreground"
           >
             <Send className="size-5" />
+          </Link>
+        </div>
+      </div>
+
+      {/* Mobile: avatar+name row, then a separate full-width Follow + Message row below. */}
+      <div className="flex flex-col gap-4 md:hidden">
+        <div className="flex items-center gap-4">
+          <Avatar className="size-16">
+            <AvatarImage src={profile.avatarUrl ?? undefined} alt={profile.name} />
+            <AvatarFallback className="text-xl">{initials(profile.name)}</AvatarFallback>
+          </Avatar>
+          <div>
+            <h1 className="text-xl font-bold">{profile.name}</h1>
+            <p className="text-sm text-muted-foreground">@{profile.username}</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-3">
+          <FollowButton
+            username={username}
+            initialFollowing={profile.isFollowing}
+            size="sm"
+            className="flex-1"
+            onChanged={() =>
+              queryClient.invalidateQueries({ queryKey: ["publicProfile", username] })
+            }
+          />
+          <Link
+            href={`/messages/${username}`}
+            aria-label="Message"
+            className="flex size-9.75 shrink-0 items-center justify-center rounded-full border border-border text-foreground"
+          >
+            <Send className="size-4" />
           </Link>
         </div>
       </div>

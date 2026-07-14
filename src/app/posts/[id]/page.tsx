@@ -85,6 +85,56 @@ function CommentRow({
   );
 }
 
+function CommentsListBody({
+  isPending,
+  isEmpty,
+  comments,
+  currentUserId,
+  postAuthorId,
+  onDelete,
+}: {
+  isPending: boolean;
+  isEmpty: boolean;
+  comments: Comment[];
+  currentUserId: number | undefined;
+  postAuthorId: number;
+  onDelete: (commentId: number) => void;
+}) {
+  return (
+    <>
+      {isPending && (
+        <div className="flex flex-col gap-4 py-4">
+          {[0, 1].map((i) => (
+            <div key={i} className="flex items-center gap-3">
+              <Skeleton className="size-10 rounded-full" />
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-24" />
+                <Skeleton className="h-3 w-32" />
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {!isPending && isEmpty && (
+        <div className="flex flex-col items-center gap-1 py-12 text-center">
+          <p className="font-bold">No Comments yet</p>
+          <p className="text-sm text-muted-foreground">Start the conversation</p>
+        </div>
+      )}
+
+      {comments.map((comment) => (
+        <CommentRow
+          key={comment.id}
+          comment={comment}
+          canDelete={currentUserId === comment.author.id || currentUserId === postAuthorId}
+          onDelete={() => onDelete(comment.id)}
+        />
+      ))}
+    </>
+  );
+}
+
 function PostDetailContent({ postId }: { postId: number }) {
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -205,11 +255,12 @@ function PostDetailContent({ postId }: { postId: number }) {
 
   return (
     <div className="relative flex w-full flex-col md:flex-row md:gap-5">
+      {/* Desktop close button; mobile has its own X floating above the comments sheet below. */}
       <button
         type="button"
         aria-label="Close"
         onClick={() => router.back()}
-        className="absolute -top-10 right-0 text-foreground md:-top-12"
+        className="absolute -top-10 right-0 hidden text-foreground md:-top-12 md:block"
       >
         <X className="size-6" />
       </button>
@@ -259,45 +310,19 @@ function PostDetailContent({ postId }: { postId: number }) {
 
         {post.caption && <p className="mt-4 text-sm">{post.caption}</p>}
 
-        <div className="mt-4 border-t border-border pt-4">
-          <h2 className="font-bold">Comments</h2>
-
-          {commentsQuery.isPending && (
-            <div className="flex flex-col gap-4 py-4">
-              {[0, 1].map((i) => (
-                <div key={i} className="flex items-center gap-3">
-                  <Skeleton className="size-10 rounded-full" />
-                  <div className="space-y-2">
-                    <Skeleton className="h-4 w-24" />
-                    <Skeleton className="h-3 w-32" />
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {commentsQuery.isSuccess && comments.length === 0 && (
-            <div className="flex flex-col items-center gap-1 py-12 text-center">
-              <p className="font-bold">No Comments yet</p>
-              <p className="text-sm text-muted-foreground">Start the conversation</p>
-            </div>
-          )}
-
-          <div className="max-h-100 overflow-y-auto">
-            {comments.map((comment) => (
-              <CommentRow
-                key={comment.id}
-                comment={comment}
-                canDelete={
-                  currentUser?.id === comment.author.id || currentUser?.id === post.author.id
-                }
-                onDelete={() => deleteCommentMutation.mutate(comment.id)}
-              />
-            ))}
-          </div>
-        </div>
-
-        <div className="mt-4 flex items-center justify-between">
+        {/*
+          Mobile: measured via getBoundingClientRect() (getBBox() alone was
+          misleading here — this SVG has multiple transformed groups) from
+          design/comment-mobile.svg and design/no-comment-mobile.svg. The
+          icon row sits ABOVE the comments sheet on mobile (opposite order
+          from desktop), and Comments is a real fixed bottom sheet: a
+          full-screen #0A0D12/80 scrim, an opaque rounded-t-2xl sheet
+          auto-sized to content up to 62dvh (matches the populated example's
+          538/852 ≈ 63%) with internal scroll, and an X that floats a
+          constant 14px above the sheet's own top edge in BOTH the
+          populated and empty-state exports (not a fixed screen position).
+        */}
+        <div className="mt-4 flex items-center justify-between md:hidden">
           <div className="flex items-center gap-7.5">
             <div className="flex items-center gap-2">
               <button
@@ -343,7 +368,99 @@ function PostDetailContent({ postId }: { postId: number }) {
           </button>
         </div>
 
-        <div className="mt-4">
+        <div className="fixed inset-0 z-[60] bg-[#0A0D12]/80 md:hidden" />
+        <div className="fixed inset-x-0 bottom-0 z-[60] flex flex-col items-end md:hidden">
+          <button
+            type="button"
+            aria-label="Close"
+            onClick={() => router.back()}
+            className="mr-5.5 mb-3.5 text-foreground"
+          >
+            <X className="size-3" strokeWidth={2} />
+          </button>
+          <div className="flex max-h-[62dvh] w-full flex-col rounded-t-2xl bg-[#0A0D12] px-4 pt-4">
+            <h2 className="shrink-0 font-bold">Comments</h2>
+            <div className="flex-1 overflow-y-auto">
+              <CommentsListBody
+                isPending={commentsQuery.isPending}
+                isEmpty={commentsQuery.isSuccess && comments.length === 0}
+                comments={comments}
+                currentUserId={currentUser?.id}
+                postAuthorId={post.author.id}
+                onDelete={(id) => deleteCommentMutation.mutate(id)}
+              />
+            </div>
+            <div className="shrink-0 py-4">
+              <CommentComposer
+                onSubmit={(text) => commentMutation.mutate(text)}
+                isPending={commentMutation.isPending}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Desktop: plain inline list, no sheet/card (per comment-dekstop.svg), icon row comes AFTER comments. */}
+        <div className="mt-4 hidden border-t border-border pt-4 md:block">
+          <h2 className="font-bold">Comments</h2>
+          <div className="max-h-100 overflow-y-auto">
+            <CommentsListBody
+              isPending={commentsQuery.isPending}
+              isEmpty={commentsQuery.isSuccess && comments.length === 0}
+              comments={comments}
+              currentUserId={currentUser?.id}
+              postAuthorId={post.author.id}
+              onDelete={(id) => deleteCommentMutation.mutate(id)}
+            />
+          </div>
+        </div>
+
+        <div className="mt-4 hidden items-center justify-between md:flex">
+          <div className="flex items-center gap-7.5">
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => likeMutation.mutate()}
+                aria-pressed={isLiked}
+                aria-label={isLiked ? "Unlike" : "Like"}
+              >
+                <Heart
+                  className={cn(
+                    "size-5",
+                    isLiked ? "fill-[#B41759] text-[#B41759]" : "text-foreground"
+                  )}
+                />
+              </button>
+              <button type="button" onClick={() => setShowLikes(true)} className="text-sm">
+                {displayLikeCount}
+              </button>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <MessageCircle className="size-5" />
+              <span className="text-sm">{post.commentCount}</span>
+            </div>
+
+            <button type="button" onClick={comingSoon} aria-label="Share">
+              <Send className="size-5" />
+            </button>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => saveMutation.mutate()}
+            aria-pressed={saved ?? false}
+            aria-label={(saved ?? false) ? "Unsave" : "Save"}
+          >
+            <Bookmark
+              className={cn(
+                "size-5",
+                saved ?? false ? "fill-foreground text-foreground" : "text-foreground"
+              )}
+            />
+          </button>
+        </div>
+
+        <div className="mt-4 hidden md:block">
           <CommentComposer
             onSubmit={(text) => commentMutation.mutate(text)}
             isPending={commentMutation.isPending}

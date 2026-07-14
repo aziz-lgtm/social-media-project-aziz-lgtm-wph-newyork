@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { CircleCheck } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
 import { followUser, unfollowUser } from "@/lib/api/follow";
@@ -19,11 +20,13 @@ export function FollowButton({
   initialFollowing,
   onChanged,
   size = "md",
+  className,
 }: {
   username: string;
   initialFollowing: boolean;
   onChanged?: (following: boolean) => void;
   size?: "sm" | "md";
+  className?: string;
 }) {
   const router = useRouter();
   const currentUser = useAppSelector((s) => s.auth.user);
@@ -52,13 +55,15 @@ export function FollowButton({
       }}
       disabled={mutation.isPending}
       className={cn(
-        "shrink-0 rounded-full font-semibold transition-colors disabled:opacity-60",
+        "flex shrink-0 items-center justify-center gap-1.5 rounded-full font-semibold transition-colors disabled:opacity-60",
         size === "md" ? "h-12 px-6 text-sm" : "h-9.75 px-4 text-sm",
         following
           ? "border border-border text-foreground"
-          : "bg-[#6936F2] text-white hover:bg-[#7F51F9]"
+          : "bg-[#6936F2] text-white hover:bg-[#7F51F9]",
+        className
       )}
     >
+      {following && <CircleCheck className="size-3.5" strokeWidth={2} />}
       {following ? "Following" : "Follow"}
     </button>
   );

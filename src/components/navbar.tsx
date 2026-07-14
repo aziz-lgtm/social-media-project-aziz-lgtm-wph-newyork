@@ -208,7 +208,7 @@ export function Navbar() {
 
       {/* Mobile full-screen search, measured from design/found-mobile.svg: input+X row replaces the header, results fill the rest of the viewport. */}
       {mobileSearchOpen && (
-        <div className="fixed inset-0 z-50 flex flex-col bg-black md:hidden">
+        <div className="fixed inset-0 z-[60] flex flex-col bg-black md:hidden">
           <div className="flex h-16 items-center gap-3 border-b border-border px-4">
             <div className="flex h-9.75 flex-1 items-center gap-2 rounded-full border border-border bg-[#0A0D12] px-4">
               <Search className="size-4 shrink-0 text-[#717680]" />

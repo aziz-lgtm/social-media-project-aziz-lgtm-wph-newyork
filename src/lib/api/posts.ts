@@ -36,6 +36,14 @@ export async function deletePost(id: number): Promise<void> {
   await api.delete(`/api/posts/${id}`);
 }
 
+export async function createPost(image: File, caption: string): Promise<Post> {
+  const form = new FormData();
+  form.append("image", image);
+  if (caption) form.append("caption", caption);
+  const res = await api.post<ApiResponse<Post>>("/api/posts", form);
+  return res.data.data;
+}
+
 export async function likePost(id: number) {
   const res = await api.post<ApiResponse<{ liked: boolean; likeCount: number }>>(
     `/api/posts/${id}/like`

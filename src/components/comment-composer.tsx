@@ -6,9 +6,10 @@ import { EmojiPicker } from "@/components/emoji-picker";
 import { cn } from "@/lib/utils";
 
 /**
- * Measured from design/comment-dekstop.svg and design/comment-mobile.svg:
- * emoji button ~36x36 (rx 11.5), input flex-1 h-9 (rx 11.5, bg #0A0D12,
- * border #181D27), gap ~20px, "Post" text right-aligned inside the row.
+ * Re-measured via getBBox() from design/comment-dekstop.svg and
+ * design/comment-mobile.svg (identical on both breakpoints): emoji button
+ * and input are both 47px tall (rx 11.5), separated by a 9px gap — not the
+ * 36px/20px originally guessed here.
  */
 export function CommentComposer({
   onSubmit,
@@ -29,13 +30,13 @@ export function CommentComposer({
   };
 
   return (
-    <div className="flex items-center gap-5">
+    <div className="flex items-center gap-2.25">
       <div className="relative shrink-0">
         <button
           type="button"
           aria-label="Choose emoji"
           onClick={() => setPickerOpen((v) => !v)}
-          className="flex size-9 items-center justify-center rounded-[11.5px] border border-border text-foreground"
+          className="flex size-11.75 items-center justify-center rounded-[11.5px] border border-border text-foreground"
         >
           <Smile className="size-5" />
         </button>
@@ -49,7 +50,7 @@ export function CommentComposer({
         )}
       </div>
 
-      <div className="flex h-9 flex-1 items-center rounded-[11.5px] border border-border bg-[#0A0D12] pl-4 pr-3">
+      <div className="flex h-11.75 flex-1 items-center rounded-[11.5px] border border-border bg-[#0A0D12] pl-4 pr-4">
         <input
           type="text"
           value={text}

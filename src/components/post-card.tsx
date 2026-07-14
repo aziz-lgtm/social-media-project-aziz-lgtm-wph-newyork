@@ -88,11 +88,12 @@ export function PostCard({
     },
   });
 
-  const isLong = post.caption.length > CAPTION_LIMIT;
+  const captionText = post.caption ?? "";
+  const isLong = captionText.length > CAPTION_LIMIT;
   const caption =
     expanded || !isLong
-      ? post.caption
-      : post.caption.slice(0, CAPTION_LIMIT).trimEnd() + "...";
+      ? captionText
+      : captionText.slice(0, CAPTION_LIMIT).trimEnd() + "...";
 
   const comingSoon = () => toast.info("Coming soon");
 

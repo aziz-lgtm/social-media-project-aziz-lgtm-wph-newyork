@@ -45,7 +45,8 @@ export interface PostAuthor {
 export interface Post {
   id: number;
   imageUrl: string;
-  caption: string;
+  /** The API returns null for posts created without a caption. */
+  caption: string | null;
   createdAt: string;
   author: PostAuthor;
   likeCount: number;
