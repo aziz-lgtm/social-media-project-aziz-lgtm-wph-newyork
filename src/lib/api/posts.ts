@@ -5,6 +5,7 @@ import type {
   Pagination,
   Post,
   PostLikesResult,
+  UserPostsResult,
 } from "@/lib/types";
 
 export async function getFeed(page: number): Promise<FeedResult> {
@@ -85,4 +86,31 @@ export async function getMySaved(): Promise<Set<number>> {
     { params: { limit: 50 } }
   );
   return new Set(res.data.data.posts.map((p) => p.id));
+}
+
+export async function getMySavedPosts(page: number): Promise<UserPostsResult> {
+  const res = await api.get<ApiResponse<UserPostsResult>>("/api/me/saved", {
+    params: { page, limit: 12 },
+  });
+  return res.data.data;
+}
+
+export async function getMyLikes(page: number): Promise<UserPostsResult> {
+  const res = await api.get<ApiResponse<UserPostsResult>>("/api/me/likes", {
+    params: { page, limit: 12 },
+  });
+  return res.data.data;
+}
+
+/**
+ * Unlike /api/users/{username}/posts (`{posts, pagination}`), this returns
+ * `{items, pagination}` like /api/feed — remapped here so callers get the
+ * same UserPostsResult shape as every other profile grid.
+ */
+export async function getMyPosts(page: number): Promise<UserPostsResult> {
+  const res = await api.get<ApiResponse<{ items: Post[]; pagination: Pagination }>>(
+    "/api/me/posts",
+    { params: { page, limit: 12 } }
+  );
+  return { posts: res.data.data.items, pagination: res.data.data.pagination };
 }

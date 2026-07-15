@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import { SplashScreen } from "@/components/splash-screen";
 import { useAppSelector } from "@/store/hooks";
 
 /**
@@ -19,7 +20,11 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
     }
   }, [hydrated, token, router, pathname]);
 
-  if (!hydrated || !token) return null;
+  // Not hydrated yet: legitimately loading, show the splash. Hydrated but
+  // no token: a redirect to /login is about to fire, so stay blank rather
+  // than flashing the splash right before /login's own UI takes over.
+  if (!hydrated) return <SplashScreen />;
+  if (!token) return null;
 
   return <>{children}</>;
 }

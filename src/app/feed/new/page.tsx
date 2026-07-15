@@ -18,7 +18,7 @@ const ACCEPTED_TYPES = ["image/png", "image/jpeg"];
 function MobileHeader() {
   const router = useRouter();
   return (
-    <header className="flex h-16 items-center justify-between border-b border-border bg-black px-4 md:hidden">
+    <header className="flex h-16 items-center justify-between border-b border-border bg-black px-4 lg:hidden">
       <div className="flex items-center gap-3">
         <button type="button" onClick={() => router.back()} aria-label="Back">
           <ArrowLeft className="size-5 text-foreground" />
@@ -51,7 +51,12 @@ function AddPostContent() {
       // toast with a measured design; other toast calls keep the default
       // richColors palette.
       toast.success("Success Post", {
-        style: { background: "#079455", color: "#fff", border: "none", borderRadius: "8px" },
+        style: {
+          background: "var(--color-accent-green)",
+          color: "var(--color-white)",
+          border: "none",
+          borderRadius: "8px",
+        },
       });
       router.push("/feed");
     },
@@ -90,11 +95,11 @@ function AddPostContent() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="hidden items-center gap-3 md:flex">
+      <div className="hidden items-center gap-3 lg:flex">
         <button type="button" onClick={() => router.back()} aria-label="Back">
           <ArrowLeft className="size-5 text-foreground" />
         </button>
-        <h1 className="text-2xl font-bold">Add Post</h1>
+        <h1 className="text-display-xs font-bold">Add Post</h1>
       </div>
 
       <div>
@@ -109,7 +114,7 @@ function AddPostContent() {
         />
 
         {previewUrl ? (
-          <div className="mt-1.5 flex flex-col rounded-xl border border-border bg-[#0A0D12] px-7 pt-4 pb-4">
+          <div className="mt-1.5 flex flex-col rounded-xl border border-border bg-neutral-950 px-7 pt-4 pb-4">
             <div className="relative aspect-square w-full overflow-hidden rounded-lg">
               {/* eslint-disable-next-line @next/next/no-img-element -- local blob: URL, next/image's optimizer can't fetch it */}
               <img
@@ -118,11 +123,11 @@ function AddPostContent() {
                 className="size-full object-cover"
               />
             </div>
-            <div className="mt-3 flex items-center gap-3">
+            <div className="mt-3 flex items-center gap-2">
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="flex h-9.75 shrink-0 items-center gap-2 whitespace-nowrap rounded-lg border border-border bg-border px-4 text-sm font-semibold text-foreground"
+                className="flex h-9.75 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg border border-border bg-border px-2.5 text-sm font-semibold text-foreground"
               >
                 <Upload className="size-4" />
                 Change Image
@@ -130,7 +135,7 @@ function AddPostContent() {
               <button
                 type="button"
                 onClick={removeFile}
-                className="flex h-9.75 shrink-0 items-center gap-2 whitespace-nowrap rounded-lg border border-border bg-border px-4 text-sm font-semibold text-destructive"
+                className="flex h-9.75 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg border border-border bg-border px-2.5 text-sm font-semibold text-destructive"
               >
                 <Trash2 className="size-4" />
                 Delete Image
@@ -152,11 +157,11 @@ function AddPostContent() {
               applyFile(e.dataTransfer.files?.[0]);
             }}
             className={cn(
-              "mt-1.5 flex h-36 w-full flex-col items-center justify-center gap-1.5 rounded-xl border border-dashed bg-[#0A0D12] px-4",
+              "mt-1.5 flex h-36 w-full flex-col items-center justify-center gap-1.5 rounded-xl border border-dashed bg-neutral-950 px-4",
               imageError
                 ? "border-destructive"
                 : dragActive
-                  ? "border-[#7F51F9]"
+                  ? "border-primary-200"
                   : "border-border"
             )}
           >
@@ -164,7 +169,7 @@ function AddPostContent() {
               <UploadCloud className="size-4 text-foreground" />
             </span>
             <p className="text-sm">
-              <span className="font-semibold text-[#7F51F9]">Click to upload</span>
+              <span className="font-semibold text-primary-200">Click to upload</span>
               <span className="text-muted-foreground"> or drag and drop</span>
             </p>
             <p className="text-sm text-muted-foreground">PNG or JPG (max. 5mb)</p>
@@ -183,7 +188,7 @@ function AddPostContent() {
           value={caption}
           onChange={(e) => setCaption(e.target.value)}
           placeholder="Create your caption"
-          className="mt-1.5 h-25 w-full resize-none rounded-xl border border-border bg-[#0A0D12] p-4 text-sm text-foreground outline-none placeholder:text-[#535862]"
+          className="mt-1.5 h-25 w-full resize-none rounded-xl border border-border bg-neutral-950 p-4 text-sm text-foreground outline-none placeholder:text-neutral-600"
         />
       </div>
 
@@ -191,7 +196,7 @@ function AddPostContent() {
         type="button"
         onClick={onSubmit}
         disabled={mutation.isPending}
-        className="flex h-10 items-center justify-center rounded-full bg-[#6936F2] text-sm font-semibold text-white hover:bg-[#7F51F9] disabled:opacity-60 md:h-12"
+        className="flex h-10 items-center justify-center rounded-full bg-primary-300 text-sm font-semibold text-white hover:bg-primary-200 disabled:opacity-60 lg:h-12"
       >
         {mutation.isPending ? "Sharing…" : "Share"}
       </button>
@@ -202,11 +207,11 @@ function AddPostContent() {
 export default function AddPostPage() {
   return (
     <AuthGuard>
-      <div className="hidden md:block">
+      <div className="hidden lg:block">
         <Navbar />
       </div>
       <MobileHeader />
-      <main className="mx-auto w-full max-w-90.25 flex-1 px-4 pt-6 pb-32 md:max-w-113 md:px-0 md:pt-10">
+      <main className="mx-auto w-full max-w-90.25 flex-1 px-4 pt-6 pb-32 lg:max-w-113 lg:px-0 lg:pt-10">
         <AddPostContent />
       </main>
     </AuthGuard>

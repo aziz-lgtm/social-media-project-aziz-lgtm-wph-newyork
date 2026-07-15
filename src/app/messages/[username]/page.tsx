@@ -27,7 +27,7 @@ function initials(name: string) {
 function MobileThreadHeader({ name }: { name: string }) {
   const router = useRouter();
   return (
-    <header className="flex h-16 items-center gap-3 border-b border-border bg-black px-4 md:hidden">
+    <header className="flex h-16 items-center gap-3 border-b border-border bg-black px-4 lg:hidden">
       <button type="button" onClick={() => router.back()} aria-label="Back">
         <ArrowLeft className="size-5 text-foreground" />
       </button>
@@ -92,13 +92,13 @@ function ThreadContent({ username }: { username: string }) {
   };
 
   return (
-    <div className="flex h-[calc(100svh-4rem)] flex-col md:h-[calc(100svh-5rem)]">
-      <div className="hidden items-center gap-3 border-b border-border px-4 py-4 md:flex">
+    <div className="flex h-[calc(100svh-4rem)] flex-col lg:h-[calc(100svh-5rem)]">
+      <div className="hidden items-center gap-3 border-b border-border px-4 py-4 lg:flex">
         <Avatar className="size-10">
           <AvatarImage src={peer.avatarUrl ?? undefined} alt={peer.name} />
           <AvatarFallback>{initials(peer.name)}</AvatarFallback>
         </Avatar>
-        <span className="font-bold">{peer.name}</span>
+        <span className="text-md font-bold">{peer.name}</span>
       </div>
 
       <div className="flex-1 overflow-y-auto px-4 py-4">
@@ -120,8 +120,8 @@ function ThreadContent({ username }: { username: string }) {
                   className={cn(
                     "max-w-[75%] rounded-2xl px-4 py-2 text-sm",
                     message.from === "me"
-                      ? "bg-[#6936F2] text-white"
-                      : "border border-border bg-[#0A0D12] text-foreground"
+                      ? "bg-primary-300 text-white"
+                      : "border border-border bg-neutral-950 text-foreground"
                   )}
                 >
                   {message.text}
@@ -145,14 +145,14 @@ function ThreadContent({ username }: { username: string }) {
             if (e.key === "Enter") submit();
           }}
           placeholder="Message..."
-          className="h-12 flex-1 rounded-full border border-border bg-[#0A0D12] px-4 text-sm text-foreground outline-none placeholder:text-[#535862]"
+          className="h-12 flex-1 rounded-full border border-border bg-neutral-950 px-4 text-sm text-foreground outline-none placeholder:text-neutral-600"
         />
         <button
           type="button"
           onClick={submit}
           disabled={!text.trim()}
           aria-label="Send"
-          className="flex size-12 shrink-0 items-center justify-center rounded-full bg-[#6936F2] text-white hover:bg-[#7F51F9] disabled:opacity-60"
+          className="flex size-12 shrink-0 items-center justify-center rounded-full bg-primary-300 text-white hover:bg-primary-200 disabled:opacity-60"
         >
           <Send className="size-5" />
         </button>
@@ -175,11 +175,11 @@ export default function ThreadPage() {
 
   return (
     <AuthGuard>
-      <div className="hidden md:block">
+      <div className="hidden lg:block">
         <Navbar />
       </div>
       <MobileThreadHeader name={profileQuery.data?.name ?? username} />
-      <main className="mx-auto w-full max-w-90.25 flex-1 md:max-w-150">
+      <main className="mx-auto w-full max-w-90.25 flex-1 lg:max-w-150">
         <ThreadContent username={username} />
       </main>
     </AuthGuard>

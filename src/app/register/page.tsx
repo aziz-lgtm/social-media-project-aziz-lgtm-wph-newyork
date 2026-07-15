@@ -39,7 +39,7 @@ const registerSchema = z
 type RegisterValues = z.infer<typeof registerSchema>;
 
 const inputClass =
-  "h-12 w-full rounded-xl border bg-[#0A0D12] px-4 text-sm text-foreground outline-none placeholder:text-[#535862] focus:ring-1";
+  "h-12 w-full rounded-xl border bg-neutral-950 px-4 text-sm text-foreground outline-none placeholder:text-neutral-600 focus:ring-1";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -74,30 +74,30 @@ export default function RegisterPage() {
 
   const helper = (key: keyof RegisterValues) =>
     errors[key] && (
-      <p className="mt-1.5 text-sm text-[#B41759]">{errors[key]?.message}</p>
+      <p className="mt-1.5 text-sm text-accent-red">{errors[key]?.message}</p>
     );
 
   const border = (key: keyof RegisterValues) =>
     errors[key]
-      ? "border-[#B41759] focus:ring-[#B41759]"
+      ? "border-accent-red focus:ring-accent-red"
       : "border-border focus:ring-ring";
 
   return (
-    <main className="relative flex min-h-svh flex-col items-center justify-center overflow-hidden bg-black px-6 py-15 md:py-30">
+    <main className="relative flex min-h-svh flex-col items-center justify-center overflow-hidden bg-black px-6 py-15 lg:py-30">
       <AuthBackground />
 
       {/* Card: 523px, p-[40px_24px] gap-6 desktop / 345px, p-[32px_16px] gap-4 mobile */}
-      <div className="relative flex w-full max-w-130.75 flex-col gap-4 rounded-[16px] border border-border bg-black/20 px-4 py-8 backdrop-blur-[50px] md:gap-6 md:px-6 md:py-10">
+      <div className="relative flex w-full max-w-130.75 flex-col gap-4 rounded-[16px] border border-border bg-black/20 px-4 py-8 backdrop-blur-[50px] lg:gap-6 lg:px-6 lg:py-10">
         <div className="flex items-center justify-center gap-3">
           <Logo className="text-foreground" />
-          <span className="text-2xl font-bold">Sociality</span>
+          <span className="text-display-xs font-bold">Sociality</span>
         </div>
 
-        <h1 className="text-center text-2xl font-bold">Register</h1>
+        <h1 className="text-center text-display-xs font-bold">Register</h1>
 
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="space-y-4 md:space-y-5"
+          className="space-y-4 lg:space-y-5"
           noValidate
         >
           <div>
@@ -188,7 +188,7 @@ export default function RegisterPage() {
           </div>
 
           {apiError && (
-            <p role="alert" className="text-sm text-[#B41759]">
+            <p role="alert" className="text-sm text-accent-red">
               {apiError}
             </p>
           )}
@@ -196,15 +196,15 @@ export default function RegisterPage() {
           <button
             type="submit"
             disabled={mutation.isPending}
-            className="h-12 w-full rounded-full bg-[#6936F2] text-base font-semibold text-white transition-colors hover:bg-[#7F51F9] disabled:opacity-60"
+            className="h-12 w-full rounded-full bg-primary-300 text-md font-semibold text-white transition-colors hover:bg-primary-200 disabled:opacity-60"
           >
             {mutation.isPending ? "Submitting…" : "Submit"}
           </button>
         </form>
 
-        <p className="text-center text-base">
+        <p className="text-center text-md">
           Already have an account?{" "}
-          <Link href="/login" className="font-bold text-[#7F51F9]">
+          <Link href="/login" className="font-bold text-primary-200">
             Log in
           </Link>
         </p>

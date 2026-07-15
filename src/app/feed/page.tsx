@@ -76,7 +76,7 @@ function FeedContent() {
 
   if (feedQuery.isPending) {
     return (
-      <div className="flex w-full flex-col gap-4 md:gap-6">
+      <div className="flex w-full flex-col gap-4 lg:gap-6">
         <FeedSkeleton />
         <FeedSkeleton />
       </div>
@@ -90,7 +90,7 @@ function FeedContent() {
         <button
           type="button"
           onClick={() => feedQuery.refetch()}
-          className="text-sm font-semibold text-[#7F51F9]"
+          className="text-sm font-semibold text-primary-200"
         >
           Try again
         </button>
@@ -102,7 +102,7 @@ function FeedContent() {
 
   if (posts.length > 0) {
     return (
-      <div className="flex w-full flex-col gap-4 md:gap-6">
+      <div className="flex w-full flex-col gap-4 lg:gap-6">
         {posts.map((post) => (
           <PostCard
             key={post.id}
@@ -119,7 +119,7 @@ function FeedContent() {
   // Following-based feed is empty — fall back to public/explore posts.
   if (exploreQuery.isPending) {
     return (
-      <div className="flex w-full flex-col gap-4 md:gap-6">
+      <div className="flex w-full flex-col gap-4 lg:gap-6">
         <FeedSkeleton />
         <FeedSkeleton />
       </div>
@@ -140,9 +140,9 @@ function FeedContent() {
   }
 
   return (
-    <div className="flex w-full flex-col gap-4 md:gap-6">
+    <div className="flex w-full flex-col gap-4 lg:gap-6">
       <div>
-        <h2 className="font-bold">Discover posts</h2>
+        <h2 className="text-lg font-bold">Discover posts</h2>
         <p className="text-sm text-muted-foreground">
           Follow people to build your own feed — for now, here&apos;s what&apos;s new.
         </p>
@@ -164,7 +164,7 @@ export default function FeedPage() {
   return (
     <AuthGuard>
       <Navbar />
-      <main className="mx-auto w-full max-w-90.25 flex-1 pt-4 pb-32 md:max-w-150 md:pt-10">
+      <main className="mx-auto w-full max-w-90.25 flex-1 pt-4 pb-32 lg:max-w-150 lg:pt-10">
         <FeedContent />
       </main>
       <BottomNav />

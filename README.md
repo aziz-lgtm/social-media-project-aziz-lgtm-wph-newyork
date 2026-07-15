@@ -259,15 +259,15 @@
 
 ## 13 Deliverables (Checklist per Endpoint → UI)
 
-- [ ] **Auth** register/login → halaman & persist session
-- [ ] **/api/me** GET/PATCH → halaman `/me` + edit profil
-- [ ] **Users** search/profile/posts/likes → halaman Search & Public Profile + tabs
-- [ ] **Feed** GET → halaman `/feed` + infinite scroll
-- [ ] **Posts** POST/GET/DELETE → create modal/page, detail page, delete action
-- [ ] **Likes** POST/DELETE/GET + me/likes → toggle like, modal "Liked by", halaman My Likes
-- [ ] **Comments** GET/POST/DELETE → section komentar lengkap
-- [ ] **Follow** POST/DELETE + followers/following + me/* → tombol follow/unfollow + pages
-- [ ] **Saves** POST/DELETE + me/saved → toggle save + halaman Saved
+- [✅] **Auth** register/login → halaman & persist session
+- [✅] **/api/me** GET/PATCH → halaman `/me` + edit profil
+- [✅] **Users** search/profile/posts/likes → halaman Search & Public Profile + tabs
+- [✅] **Feed** GET → halaman `/feed` + infinite scroll
+- [✅] **Posts** POST/GET/DELETE → create modal/page, detail page, delete action
+- [x] **Likes** POST/DELETE/GET + me/likes → toggle like, modal "Liked by", halaman My Likes
+- [✅] **Comments** GET/POST/DELETE → section komentar lengkap
+- [✅] **Follow** POST/DELETE + followers/following + me/* → tombol follow/unfollow + pages
+- [✅] **Saves** POST/DELETE + me/saved → toggle save + halaman Saved
 
 ## 14 Definition of Done (DoD)
 

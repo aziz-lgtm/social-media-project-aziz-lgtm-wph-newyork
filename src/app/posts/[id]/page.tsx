@@ -60,16 +60,18 @@ function CommentRow({
   return (
     <div className="flex flex-col gap-2 border-b border-border py-4 last:border-b-0">
       <div className="flex items-center gap-3">
-        <Avatar className="size-10">
-          <AvatarImage src={comment.author.avatarUrl ?? undefined} alt={comment.author.name} />
-          <AvatarFallback>{initials(comment.author.name)}</AvatarFallback>
-        </Avatar>
-        <div>
-          <p className="text-sm font-bold">{comment.author.name}</p>
-          <p className="text-xs text-muted-foreground">
-            {dayjs(comment.createdAt).fromNow()}
-          </p>
-        </div>
+        <Link href={`/profile/${comment.author.username}`} className="flex min-w-0 items-center gap-3">
+          <Avatar className="size-10">
+            <AvatarImage src={comment.author.avatarUrl ?? undefined} alt={comment.author.name} />
+            <AvatarFallback>{initials(comment.author.name)}</AvatarFallback>
+          </Avatar>
+          <div className="min-w-0">
+            <p className="truncate text-sm font-bold">{comment.author.name}</p>
+            <p className="text-xs text-muted-foreground">
+              {dayjs(comment.createdAt).fromNow()}
+            </p>
+          </div>
+        </Link>
         {canDelete && (
           <button
             type="button"
@@ -118,7 +120,7 @@ function CommentsListBody({
 
       {!isPending && isEmpty && (
         <div className="flex flex-col items-center gap-1 py-12 text-center">
-          <p className="font-bold">No Comments yet</p>
+          <p className="text-lg font-bold">No Comments yet</p>
           <p className="text-sm text-muted-foreground">Start the conversation</p>
         </div>
       )}
@@ -221,9 +223,9 @@ function PostDetailContent({ postId }: { postId: number }) {
 
   if (postQuery.isPending) {
     return (
-      <div className="flex w-full flex-col gap-4 md:flex-row md:gap-5">
-        <Skeleton className="aspect-square w-full rounded-lg md:w-180 md:rounded-none" />
-        <div className="flex w-full flex-col gap-3 md:w-110">
+      <div className="flex w-full flex-col gap-4 lg:flex-row lg:gap-5">
+        <Skeleton className="aspect-square w-full rounded-lg lg:w-180 lg:rounded-none" />
+        <div className="flex w-full flex-col gap-3 lg:w-110">
           <div className="flex items-center gap-3">
             <Skeleton className="size-10 rounded-full" />
             <Skeleton className="h-4 w-32" />
@@ -241,7 +243,7 @@ function PostDetailContent({ postId }: { postId: number }) {
         <button
           type="button"
           onClick={() => postQuery.refetch()}
-          className="text-sm font-semibold text-[#7F51F9]"
+          className="text-sm font-semibold text-primary-200"
         >
           Try again
         </button>
@@ -254,19 +256,19 @@ function PostDetailContent({ postId }: { postId: number }) {
   const comingSoon = () => toast.info("Coming soon");
 
   return (
-    <div className="relative flex w-full flex-col md:flex-row md:gap-5">
+    <div className="relative flex w-full flex-col lg:flex-row lg:gap-5">
       {/* Desktop close button; mobile has its own X floating above the comments sheet below. */}
       <button
         type="button"
         aria-label="Close"
         onClick={() => router.back()}
-        className="absolute -top-10 right-0 hidden text-foreground md:-top-12 md:block"
+        className="absolute -top-10 right-0 hidden text-foreground lg:-top-12 lg:block"
       >
         <X className="size-6" />
       </button>
 
       {/* Image: sharp corners + fixed 720 desktop (measured), rounded fluid mobile */}
-      <div className="relative aspect-square w-full shrink-0 overflow-hidden rounded-lg md:w-180 md:rounded-none">
+      <div className="relative aspect-square w-full shrink-0 overflow-hidden rounded-lg lg:w-180 lg:rounded-none">
         <Image
           src={post.imageUrl}
           alt={post.caption || `Post by ${post.author.name}`}
@@ -276,7 +278,7 @@ function PostDetailContent({ postId }: { postId: number }) {
         />
       </div>
 
-      <div className="flex w-full min-w-0 flex-col md:w-110">
+      <div className="flex w-full min-w-0 flex-col lg:w-110">
         <div className="flex items-center gap-3">
           <Link href={`/profile/${post.author.username}`}>
             <Avatar className="size-10">
@@ -285,7 +287,7 @@ function PostDetailContent({ postId }: { postId: number }) {
             </Avatar>
           </Link>
           <div>
-            <p className="font-bold">{post.author.name}</p>
+            <p className="text-md font-bold">{post.author.name}</p>
             <p className="text-sm text-muted-foreground">
               {dayjs(post.createdAt).fromNow()}
             </p>
@@ -322,7 +324,7 @@ function PostDetailContent({ postId }: { postId: number }) {
           constant 14px above the sheet's own top edge in BOTH the
           populated and empty-state exports (not a fixed screen position).
         */}
-        <div className="mt-4 flex items-center justify-between md:hidden">
+        <div className="mt-4 flex items-center justify-between lg:hidden">
           <div className="flex items-center gap-7.5">
             <div className="flex items-center gap-2">
               <button
@@ -334,7 +336,7 @@ function PostDetailContent({ postId }: { postId: number }) {
                 <Heart
                   className={cn(
                     "size-5",
-                    isLiked ? "fill-[#B41759] text-[#B41759]" : "text-foreground"
+                    isLiked ? "fill-accent-red text-accent-red" : "text-foreground"
                   )}
                 />
               </button>
@@ -368,8 +370,8 @@ function PostDetailContent({ postId }: { postId: number }) {
           </button>
         </div>
 
-        <div className="fixed inset-0 z-[60] bg-[#0A0D12]/80 md:hidden" />
-        <div className="fixed inset-x-0 bottom-0 z-[60] flex flex-col items-end md:hidden">
+        <div className="fixed inset-0 z-60 bg-neutral-950/80 lg:hidden" />
+        <div className="fixed inset-x-0 bottom-0 z-60 flex flex-col items-end lg:hidden">
           <button
             type="button"
             aria-label="Close"
@@ -378,8 +380,8 @@ function PostDetailContent({ postId }: { postId: number }) {
           >
             <X className="size-3" strokeWidth={2} />
           </button>
-          <div className="flex max-h-[62dvh] w-full flex-col rounded-t-2xl bg-[#0A0D12] px-4 pt-4">
-            <h2 className="shrink-0 font-bold">Comments</h2>
+          <div className="flex max-h-[62dvh] w-full flex-col rounded-t-2xl bg-neutral-950 px-4 pt-4">
+            <h2 className="shrink-0 text-xl font-bold">Comments</h2>
             <div className="flex-1 overflow-y-auto">
               <CommentsListBody
                 isPending={commentsQuery.isPending}
@@ -400,8 +402,8 @@ function PostDetailContent({ postId }: { postId: number }) {
         </div>
 
         {/* Desktop: plain inline list, no sheet/card (per comment-dekstop.svg), icon row comes AFTER comments. */}
-        <div className="mt-4 hidden border-t border-border pt-4 md:block">
-          <h2 className="font-bold">Comments</h2>
+        <div className="mt-4 hidden border-t border-border pt-4 lg:block">
+          <h2 className="text-xl font-bold">Comments</h2>
           <div className="max-h-100 overflow-y-auto">
             <CommentsListBody
               isPending={commentsQuery.isPending}
@@ -414,7 +416,7 @@ function PostDetailContent({ postId }: { postId: number }) {
           </div>
         </div>
 
-        <div className="mt-4 hidden items-center justify-between md:flex">
+        <div className="mt-4 hidden items-center justify-between lg:flex">
           <div className="flex items-center gap-7.5">
             <div className="flex items-center gap-2">
               <button
@@ -426,7 +428,7 @@ function PostDetailContent({ postId }: { postId: number }) {
                 <Heart
                   className={cn(
                     "size-5",
-                    isLiked ? "fill-[#B41759] text-[#B41759]" : "text-foreground"
+                    isLiked ? "fill-accent-red text-accent-red" : "text-foreground"
                   )}
                 />
               </button>
@@ -460,7 +462,7 @@ function PostDetailContent({ postId }: { postId: number }) {
           </button>
         </div>
 
-        <div className="mt-4 hidden md:block">
+        <div className="mt-4 hidden lg:block">
           <CommentComposer
             onSubmit={(text) => commentMutation.mutate(text)}
             isPending={commentMutation.isPending}
@@ -479,7 +481,7 @@ export default function PostDetailPage() {
 
   return (
     <AuthGuard>
-      <main className="mx-auto w-full max-w-90.25 flex-1 px-4 pt-14 pb-10 md:max-w-295 md:px-0 md:pt-20">
+      <main className="mx-auto w-full max-w-90.25 flex-1 px-4 pt-14 pb-10 lg:max-w-295 lg:px-0 lg:pt-20">
         <PostDetailContent postId={postId} />
       </main>
     </AuthGuard>

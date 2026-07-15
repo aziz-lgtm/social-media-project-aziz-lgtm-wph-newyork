@@ -43,16 +43,9 @@ const CANNED_REPLIES = [
   "Not gonna lie, that's pretty cool",
 ];
 
-/**
- * DM is entirely local — the API has no messaging endpoints, so this
- * never reaches a server. Conversations persist to localStorage per
- * logged-in user (so a refresh doesn't lose them), and a canned reply
- * lands a second or two after you send, so the thread doesn't feel dead.
- *
- * `userId` arrives late (redux hydrates from localStorage after mount),
- * so the store is resynced during render when it changes — React's
- * sanctioned way to reset state off a changing prop without an effect.
- */
+// DM is entirely local — no messaging endpoints exist, so this never
+// reaches a server. userId arrives late (Redux hydrates after mount), so
+// the store resyncs during render rather than in an effect.
 export function useConversations(userId: number | undefined) {
   const [loadedFor, setLoadedFor] = useState(userId);
   const [store, setStore] = useState<DmStore>(() => (userId ? loadStore(userId) : {}));

@@ -18,16 +18,16 @@ export function PasswordInput({
   return (
     <div
       className={cn(
-        "flex h-12 items-center rounded-xl border bg-[#0A0D12] px-4 focus-within:ring-1",
+        "flex h-12 items-center rounded-xl border bg-neutral-950 px-4 focus-within:ring-1",
         invalid
-          ? "border-[#B41759] focus-within:ring-[#B41759]"
+          ? "border-accent-red focus-within:ring-accent-red"
           : "border-border focus-within:ring-ring",
         className
       )}
     >
       <input
         type={visible ? "text" : "password"}
-        className="w-full bg-transparent text-sm text-foreground outline-none placeholder:text-[#535862]"
+        className="w-full bg-transparent text-sm text-foreground outline-none placeholder:text-neutral-600"
         {...props}
       />
       <button
@@ -35,7 +35,7 @@ export function PasswordInput({
         tabIndex={-1}
         aria-label={visible ? "Hide password" : "Show password"}
         onClick={() => setVisible((v) => !v)}
-        className="ml-2 shrink-0 text-[#717680] hover:text-foreground"
+        className="ml-2 shrink-0 text-neutral-500 hover:text-foreground"
       >
         {visible ? <EyeOff className="size-5" /> : <Eye className="size-5" />}
       </button>

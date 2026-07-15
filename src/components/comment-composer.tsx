@@ -50,7 +50,7 @@ export function CommentComposer({
         )}
       </div>
 
-      <div className="flex h-11.75 flex-1 items-center rounded-[11.5px] border border-border bg-[#0A0D12] pl-4 pr-4">
+      <div className="flex h-11.75 flex-1 items-center rounded-[11.5px] border border-border bg-neutral-950 pl-4 pr-4">
         <input
           type="text"
           value={text}
@@ -59,7 +59,7 @@ export function CommentComposer({
             if (e.key === "Enter") submit();
           }}
           placeholder="Add Comment"
-          className="w-full bg-transparent text-sm text-foreground outline-none placeholder:text-[#535862]"
+          className="w-full bg-transparent text-sm text-foreground outline-none placeholder:text-neutral-600"
         />
         <button
           type="button"
@@ -67,7 +67,7 @@ export function CommentComposer({
           disabled={!text.trim() || isPending}
           className={cn(
             "shrink-0 text-sm font-semibold",
-            text.trim() ? "text-[#7F51F9]" : "text-[#535862]"
+            text.trim() ? "text-primary-200" : "text-neutral-600"
           )}
         >
           Post

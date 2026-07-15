@@ -63,3 +63,17 @@ export async function getFollowing(
   );
   return res.data.data;
 }
+
+export async function getMyFollowers(page: number): Promise<SearchResult> {
+  const res = await api.get<ApiResponse<SearchResult>>("/api/me/followers", {
+    params: { page, limit: 20 },
+  });
+  return res.data.data;
+}
+
+export async function getMyFollowing(page: number): Promise<SearchResult> {
+  const res = await api.get<ApiResponse<SearchResult>>("/api/me/following", {
+    params: { page, limit: 20 },
+  });
+  return res.data.data;
+}

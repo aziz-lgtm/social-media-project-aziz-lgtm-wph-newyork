@@ -29,14 +29,6 @@ function initials(name: string) {
 
 const CAPTION_LIMIT = 80;
 
-/**
- * Measured from design/feed.svg (desktop) and design/feed-mobile.svg
- * (mobile): card 600px wide / 361px mobile, gap 12 / 8 between elements,
- * header avatar 64px / 44px, image square rounded 8px both (mobile
- * measured 361x353, effectively 1:1), icon row (heart #B41759 when liked
- * / outline otherwise, comment, share, bookmark right-aligned), divider
- * #181D27 at the bottom.
- */
 export function PostCard({
   post,
   initiallySaved,
@@ -98,18 +90,18 @@ export function PostCard({
   const comingSoon = () => toast.info("Coming soon");
 
   return (
-    <article className="flex w-full flex-col gap-2 md:gap-3">
+    <article className="flex w-full flex-col gap-2 lg:gap-3">
       <Link
         href={`/profile/${post.author.username}`}
-        className="flex items-center gap-3 text-left"
+        className="flex items-center gap-2 text-left xs:gap-3"
       >
-        <Avatar className="size-11 md:size-16">
+        <Avatar className="size-9 xs:size-11 lg:size-16">
           <AvatarImage src={post.author.avatarUrl ?? undefined} alt={post.author.name} />
           <AvatarFallback>{initials(post.author.name)}</AvatarFallback>
         </Avatar>
-        <div>
-          <p className="font-bold">{post.author.name}</p>
-          <p className="text-sm text-[#A4A7AE]">{dayjs(post.createdAt).fromNow()}</p>
+        <div className="min-w-0">
+          <p className="truncate text-sm font-bold xs:text-md">{post.author.name}</p>
+          <p className="text-xs text-neutral-400 xs:text-sm">{dayjs(post.createdAt).fromNow()}</p>
         </div>
       </Link>
 
@@ -138,7 +130,7 @@ export function PostCard({
               <Heart
                 className={cn(
                   "size-5",
-                  liked ? "fill-[#B41759] text-[#B41759]" : "text-foreground"
+                  liked ? "fill-accent-red text-accent-red" : "text-foreground"
                 )}
               />
             </button>
@@ -185,7 +177,7 @@ export function PostCard({
       </div>
 
       <div>
-        <Link href={`/profile/${post.author.username}`} className="font-bold">
+        <Link href={`/profile/${post.author.username}`} className="text-md font-bold">
           {post.author.name}
         </Link>
         {post.caption && (
@@ -195,7 +187,7 @@ export function PostCard({
               <button
                 type="button"
                 onClick={() => setExpanded(true)}
-                className="font-medium text-[#7F51F9]"
+                className="font-medium text-primary-200"
               >
                 Show More
               </button>

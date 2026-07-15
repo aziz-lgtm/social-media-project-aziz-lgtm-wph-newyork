@@ -70,7 +70,7 @@ export function SearchResultsList({
   if (searchQuery.isError || users.length === 0) {
     return (
       <div className="flex flex-col items-center gap-1 py-10 text-center">
-        <p className="font-bold">No results found</p>
+        <p className="text-lg font-bold">No results found</p>
         <p className="text-sm text-muted-foreground">Change your keyword</p>
       </div>
     );

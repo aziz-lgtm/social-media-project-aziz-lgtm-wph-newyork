@@ -18,7 +18,7 @@ export function EmojiPicker({
   onSelect: (emoji: string) => void;
 }) {
   return (
-    <div className="absolute bottom-full left-0 mb-2 grid w-52.25 grid-cols-6 gap-1 rounded-[11.5px] border border-border bg-[#0A0D12] p-2">
+    <div className="absolute bottom-full left-0 mb-2 grid w-52.25 grid-cols-6 gap-1 rounded-[11.5px] border border-border bg-neutral-950 p-2">
       {EMOJIS.map((emoji) => (
         <button
           key={emoji}

@@ -59,7 +59,7 @@ export function FollowButton({
         size === "md" ? "h-12 px-6 text-sm" : "h-9.75 px-4 text-sm",
         following
           ? "border border-border text-foreground"
-          : "bg-[#6936F2] text-white hover:bg-[#7F51F9]",
+          : "bg-primary-300 text-white hover:bg-primary-200",
         className
       )}
     >

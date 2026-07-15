@@ -61,7 +61,7 @@ function MessagesContent() {
               <AvatarFallback>{initials(thread.name)}</AvatarFallback>
             </Avatar>
             <div className="min-w-0 flex-1">
-              <p className="font-bold">{thread.name}</p>
+              <p className="text-md font-bold">{thread.name}</p>
               <p className="truncate text-sm text-muted-foreground">
                 {last.from === "me" ? "You: " : ""}
                 {last.text}
@@ -81,7 +81,7 @@ export default function MessagesPage() {
   return (
     <AuthGuard>
       <Navbar />
-      <main className="mx-auto w-full max-w-90.25 flex-1 px-4 pt-6 pb-32 md:max-w-150 md:pt-10">
+      <main className="mx-auto w-full max-w-90.25 flex-1 px-4 pt-6 pb-32 lg:max-w-150 lg:pt-10">
         <h1 className="mb-4 text-xl font-bold">Messages</h1>
         <MessagesContent />
       </main>

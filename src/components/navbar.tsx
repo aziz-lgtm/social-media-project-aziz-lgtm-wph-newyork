@@ -17,7 +17,6 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { logout } from "@/store/auth-slice";
 import { useRouter } from "next/navigation";
 
-/** Desktop guest buttons, inline in the header (measured from design/Before-Login.svg). */
 function DesktopGuestButtons() {
   return (
     <div className="flex items-center gap-3">
@@ -29,7 +28,7 @@ function DesktopGuestButtons() {
       </Link>
       <Link
         href="/register"
-        className="flex h-11 items-center rounded-full bg-[#6936F2] px-6 text-sm font-semibold text-white hover:bg-[#7F51F9]"
+        className="flex h-11 items-center rounded-full bg-primary-300 px-6 text-sm font-semibold text-white hover:bg-primary-200"
       >
         Register
       </Link>
@@ -37,14 +36,9 @@ function DesktopGuestButtons() {
   );
 }
 
-/**
- * Mobile guest buttons, revealed by the hamburger toggle below the header.
- * Measured from design/before-login-open-menu.svg: two ~40px pill buttons
- * flush under the header, gap ~12px, flex-1 to fill the row.
- */
 function MobileGuestButtons() {
   return (
-    <div className="flex gap-3 px-4 pb-4 md:hidden">
+    <div className="flex gap-3 px-4 pb-4 lg:hidden">
       <Link
         href="/login"
         className="flex h-10 flex-1 items-center justify-center rounded-full border border-border text-sm font-semibold text-foreground"
@@ -53,7 +47,7 @@ function MobileGuestButtons() {
       </Link>
       <Link
         href="/register"
-        className="flex h-10 flex-1 items-center justify-center rounded-full bg-[#6936F2] text-sm font-semibold text-white hover:bg-[#7F51F9]"
+        className="flex h-10 flex-1 items-center justify-center rounded-full bg-primary-300 text-sm font-semibold text-white hover:bg-primary-200"
       >
         Register
       </Link>
@@ -86,7 +80,7 @@ export function UserMenu({ size }: { size: "desktop" | "mobile" }) {
           <AvatarFallback>{initials}</AvatarFallback>
         </Avatar>
         {size === "desktop" && (
-          <span className="text-base font-semibold text-foreground">
+          <span className="text-md font-semibold text-foreground">
             {user.name}
           </span>
         )}
@@ -102,10 +96,8 @@ export function UserMenu({ size }: { size: "desktop" | "mobile" }) {
         <DropdownMenuItem
           variant="destructive"
           onClick={() => {
-            // Clear the session, then do a full navigation (not router.replace)
-            // to the guest home. A client-side transition races AuthGuard's own
-            // redirect effect on the still-mounted guarded page (e.g. /feed),
-            // which wins and sends us to /login?returnTo=... instead.
+            // Full navigation, not router.replace — avoids racing AuthGuard's
+            // own redirect effect on the still-mounted guarded page.
             dispatch(logout());
             window.location.href = "/";
           }}
@@ -131,15 +123,15 @@ export function Navbar() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-black">
       {/* Desktop: 1440×80, px-120 */}
-      <div className="mx-auto hidden h-20 w-full max-w-page items-center justify-between gap-6 px-30 md:flex">
+      <div className="mx-auto hidden h-20 w-full max-w-page items-center justify-between gap-6 px-30 lg:flex">
         <Link href="/feed" className="flex shrink-0 items-center gap-3">
           <Logo className="text-foreground" />
-          <span className="text-2xl font-bold text-foreground">Sociality</span>
+          <span className="text-display-xs font-bold text-foreground">Sociality</span>
         </Link>
 
         <div ref={desktopFormRef} className="relative w-full max-w-122.75">
-          <div className="flex h-12 w-full items-center gap-2 rounded-full border border-border bg-[#0A0D12] px-4">
-            <Search className="size-4 shrink-0 text-[#717680]" />
+          <div className="flex h-12 w-full items-center gap-2 rounded-full border border-border bg-neutral-950 px-4">
+            <Search className="size-4 shrink-0 text-neutral-500" />
             <input
               type="search"
               value={query}
@@ -158,7 +150,7 @@ export function Navbar() {
 
           {/* Measured from design/Found-dekstop.svg and not-found-dekstop.svg: same 490px panel, rx 19.5, bg #0A0D12 border #181D27, positioned flush under the search bar. */}
           {desktopDropdownOpen && (
-            <div className="absolute top-full mt-2 w-full rounded-[19.5px] border border-border bg-[#0A0D12] p-3">
+            <div className="absolute top-full mt-2 w-full rounded-[19.5px] border border-border bg-neutral-950 p-3">
               <SearchResultsList
                 query={query}
                 searchQuery={searchQuery}
@@ -174,7 +166,7 @@ export function Navbar() {
       </div>
 
       {/* Mobile: 393×64, px-16 */}
-      <div className="flex h-16 items-center justify-between px-4 md:hidden">
+      <div className="flex h-16 items-center justify-between px-4 lg:hidden">
         <Link href="/feed" className="flex items-center gap-2.5">
           <Logo className="text-foreground" />
           <span className="text-xl font-bold text-foreground">Sociality</span>
@@ -208,10 +200,10 @@ export function Navbar() {
 
       {/* Mobile full-screen search, measured from design/found-mobile.svg: input+X row replaces the header, results fill the rest of the viewport. */}
       {mobileSearchOpen && (
-        <div className="fixed inset-0 z-[60] flex flex-col bg-black md:hidden">
+        <div className="fixed inset-0 z-60 flex flex-col bg-black lg:hidden">
           <div className="flex h-16 items-center gap-3 border-b border-border px-4">
-            <div className="flex h-9.75 flex-1 items-center gap-2 rounded-full border border-border bg-[#0A0D12] px-4">
-              <Search className="size-4 shrink-0 text-[#717680]" />
+            <div className="flex h-9.75 flex-1 items-center gap-2 rounded-full border border-border bg-neutral-950 px-4">
+              <Search className="size-4 shrink-0 text-neutral-500" />
               <input
                 type="search"
                 autoFocus
